@@ -1,0 +1,248 @@
+%% COMPILER AVEC XELATEX
+
+\documentclass[11pt, a4paper]{article}
+\usepackage[french]{babel}
+%\usepackage[utf8]{inputenc}
+\usepackage{fontspec,xunicode}
+\setromanfont{Linux Biolinum O} %% POLICE REQUISE
+%\usepackage[T1]{fontenc}
+
+\usepackage{geometry}
+\geometry{hmargin=2cm, vmargin=2.5cm} %%% Marges
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Sécurité 2012-2013}
+\rhead{M2 MIAGE/IRAD - Université d'Orléans}
+\rfoot{\thepage/\pageref{lastpage}}
+%\lfoot{Version $\alpha$}%\footnotesize\url{http://www.univ-orleans.fr/lifo/Members/Bastien.Le-gloannec/ChallengeCrypto/}
+
+\usepackage{amsmath,amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx,xcolor,tikz}
+\usepackage{enumerate,url,hyperref,subfigure}
+\usepackage[geometry]{ifsym}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\newcommand{\TODO}{\textcolor{red}{\framebox{\textbf{TODO}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\titre}[1]{\begin{center}\Huge\textbf{#1}\end{center}}
+
+\newcommand{\newexo}[3]{\paragraph{#1}{\small#2}\hfill{}{\textit{#3}}}
+
+\newcommand{\superfantome}{\vphantom{abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\_}}
+
+\newcommand{\codebox}[1]{\raisebox{-0.135cm}{\tikz{\node[fill=blue!10,rounded
+      corners,inner sep=2pt]{\small\tt\superfantome#1};}}}
+
+
+%% NB : largeur voulue des grandes box : textwidth + 8pt (4pt de chaque côté)
+
+\newcommand{\groupe}[1]{
+  \vspace{0.6cm}%
+  \noindent\hspace{-4pt}%
+  \tikz{\node[fill=black!70, rounded corners, inner sep=4pt]{\makebox[\textwidth]{\color{white}\textbf{\superfantome#1}}};}%
+  \vspace{-0.3cm}%
+}
+
+%% Correction de la largeur pour inner sep 6pt (au lieu de 4pt)
+\newlength{\boxwidth}
+\addtolength{\boxwidth}{\textwidth}
+\addtolength{\boxwidth}{-4pt}
+
+\newcommand{\bigbox}[2]{\noindent\hspace{-4pt}\tikz{\node[fill=#1,rounded
+    corners,inner sep=6pt]{\parbox{\boxwidth}{#2}};}}
+
+\newcommand{\bigbluebox}[1]{\bigbox{blue!10}{#1}}
+\newcommand{\bigredbox}[1]{\bigbox{red!10}{#1}}
+\newcommand{\biggreenbox}[1]{\bigbox{green!10}{#1}}
+
+\newcommand{\centercodebox}[1]{
+  \begin{center}%
+  \tikz{\node[fill=blue!10,rounded corners,inner sep=6pt]{\parbox{0.8\textwidth}{\tt #1}};}%
+  \end{center}%
+}
+
+\newcommand{\pictotriangle}{\textcolor{red!60}{\raisebox{-1.2pt}{\FilledTriangleUp}}}
+\newcommand{\pictocarre}{\textcolor{green!50}{\raisebox{-2pt}{\FilledSquare}}}
+\newcommand{\pictocercle}{\textcolor{blue!60}{\raisebox{-1.5pt}{\FilledCircle}}}
+
+\tikzstyle{polygonstyle}=[draw=black!70,fill=black!50,line width=1pt]
+\newcommand{\polygona}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-0.86603,-0.50000) -- (0.86603,-0.50000)  --cycle;}}
+\newcommand{\polygonb}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-1.00000,0.00000) -- (-0.00000,-1.00000) -- (1.00000,-0.00000)  --cycle;}}
+\newcommand{\polygonc}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-0.95106,0.30902) -- (-0.58779,-0.80902) -- (0.58779,-0.80902) -- (0.95106,0.30902)  --cycle;}}
+\newcommand{\polygond}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-0.86603,0.50000) -- (-0.86603,-0.50000) -- (-0.00000,-1.00000) -- (0.86603,-0.50000) -- (0.86603,0.50000)  --cycle;}}
+\newcommand{\polygone}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-0.78183,0.62349) -- (-0.97493,-0.22252) -- (-0.43388,-0.90097) -- (0.43388,-0.90097) -- (0.97493,-0.22252) -- (0.78183,0.62349)  --cycle;}}
+\newcommand{\polygonf}{\tikz[scale=0.1]{\filldraw[polygonstyle] (0.00000,1.00000) -- (-0.70711,0.70711) -- (-1.00000,0.00000) -- (-0.70711,-0.70711) -- (-0.00000,-1.00000) -- (0.70711,-0.70711) -- (1.00000,-0.00000) -- (0.70711,0.70711)  --cycle;}}
+
+\renewcommand{\labelitemi}{\polygonb}  %%% Puce enumerations
+
+\newcommand{\incise}{\scalebox{2.5}[1]{-}}
+
+%%%%%%%%%%%%% D E B U T %%%%%%%%%%%%%%%
+
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Sym}{\mathfrak{S}}
+
+\setlength\parindent{0pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\titre{Challenge Cryptanalyse}
+
+\vspace{-0.3cm}
+
+\groupe{Permutations}
+
+\vspace{0.3cm}
+
+Une application $f:X\rightarrow Y$ est \emph{bijective} si tout
+élément de $Y$ admet un unique antécédent par $f$ dans $X$, i.e. si
+pour tout $y\in Y$, il existe un unique $x\in X$, tel que
+$f(x)=y$. En notant $f^{-1}(y)$ cet unique $x$, on définit une
+application $f^{-1}:Y\rightarrow X$, appelée \emph{inverse} de $f$. En
+particulier, pour tout $x\in X$, $f^{-1}\circ f(x) = x$ et, pour tout
+$y\in Y$, $f\circ f^{-1}(y) = y$.
+
+\vspace{0.3cm}
+
+\bigbluebox{\textbf{Définition.}~~Une \emph{permutation} $\sigma$ sur un ensemble $\E$ (fini ou
+non) est une application bijective de $\E$ dans $\E$. On note $\Sym(\E)$ l'ensemble des permutations de $\E$.}
+
+\vspace{0.2cm}
+
+\biggreenbox{\textbf{Exemple.}~~Lors d'un chiffrage par substitution monoalphabétique, la
+substitution appliquée est une permutation sur l'alphabet. Pour
+déchiffrer, il faut appliquer la permutation inverse.}
+
+On pose $\N_n=\{1,\ldots,n\}$ et $\Sym_n=\Sym(\N_n)$. On observe
+facilement que $\Sym_n$ contient $n!$ éléments.
+
+Si $\E$ est un ensemble fini de cardinal $n$, quitte à numéroter ses
+éléments de 1 à $n$, on peut identifier $\Sym(\E)$ à $\Sym_n$. En
+particulier, si $\mathcal{A}=\{a,b,\ldots,z\}$ désigne notre alphabet latin à
+26~lettres, quitte à numéroter les lettres (par exemple dans l'ordre
+alphabétique), on peut assimiler $\Sym(\mathcal{A})$ à $\Sym_{26}$.
+
+\vspace{0.3cm}
+
+Dans la suite, on considérera toujours $\E$ \textbf{fini} et l'on travaillera,
+sans perte de généralité, avec des permutations de $\Sym_n$.
+
+\vspace{0.2cm}
+
+\bigredbox{\textbf{Notation.}~~Si $\sigma\in\Sym_n$, on note
+  usuellement $\sigma$ sous la forme d'une table $[\sigma(1),\sigma(2),\ldots,\sigma(n)]$.}
+
+\vspace{0.2cm}
+
+\biggreenbox{\textbf{Exemple.}~~La permutation associée au chiffrage
+  \texttt{rot13} est :
+$$[14,15,16,17,18,19,20,21,22,23,24,25,26,1,2,3,4,5,6,7,8,9,10,11,12,13]$$
+Cette notation signifie que 1 est envoyé sur 14, 2 sur 15, \ldots{}, 13
+sur 16, 14 sur 1, 15 sur 2, \dots{}, 26 sur 13. Cette permutation est
+son propre inverse.}
+
+\vspace{0.3cm}
+
+\textbf{Remarque culturelle.}~~$\Sym(\E)$ muni de la loi de composition $\circ$ forme un
+\emph{groupe}, appelé \emph{groupe symétrique} de $\E$.
+
+\vspace{0.3cm}
+
+\biggreenbox{\textbf{Exemple.}~~On note $\tau$ la permutation
+  associée au brouilleur de la machine Enigma, $\alpha_t$, $\beta_t$
+  et $\gamma_t$ les permutations associées aux trois rotors à un
+  instant $t$ (car les rotors tournent au cours du temps, donc les
+  permutations associées changent) et
+  $\rho$ la permutation associée au réflecteur. Le chiffrage $x'$ par
+  la machine Enigma d'une
+  lettre $x$ à un instant $t$ correspond formellement à la séquence suivante de permutations :
+$$x'=\tau^{-1}\circ\alpha_t^{-1}\circ\beta_t^{-1}\circ\gamma_t^{-1}\circ\rho\circ\gamma_t\circ\beta_t\circ\alpha_t\circ\tau(x)$$}
+
+\vspace{0.2cm}
+
+\bigbluebox{\textbf{Définition.}~~Si $x_1,\ldots,x_p$ sont $p$ entiers
+  distincts de $\N_n$, on appelle
+\emph{$p$-cycle} (ou \emph{cycle de longueur $p$}) la permutation
+$\sigma\in\Sym_n$ définie par $\sigma(x_i)=x_{i+1}$, où les
+indices sont pris modulo $p$, et $\sigma(x)=x$ pour tout
+$x\notin\{x_1,\ldots,x_p\}$. On appelle l'ensemble
+$\{x_1,\ldots,x_p\}$ le \emph{support} du cycle et l'on note
+généralement $\sigma=(x_1,\ldots,x_p)$.}
+
+On se convainc aisément que si $\sigma$ et $\sigma'$ sont deux cycles
+à supports disjoints, alors ils commutent : $\sigma\circ\sigma'=\sigma'\circ\sigma$.
+
+\vspace{0.2cm}
+
+\biggreenbox{\textbf{Exemple.}~~Le cycle $(2,4,3)\in\Sym_5$ correspond
+  à la permutation $[1,4,2,3,5]$. Il envoie 2 sur 4, 4 sur 3 et 3 sur
+  2. Son support est l'ensemble $\{2,3,4\}$. Les autres éléments de
+  $\N_5$ (1 et 5) sont laissés inchangés. On remarquera que la notation utilisée n'est
+  pas unique : $(2,4,3)=(3,2,4)=(4,3,2)$.}
+
+\vspace{0.2cm}
+
+\biggreenbox{\textbf{Exemple.}~~Un chiffrage par décalage de César
+  correspond à l'application d'une puissance (i.e. à l'itération un
+  nombre donné de fois) du 26-cycle suivant :
+$$\sigma=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26)$$
+$\sigma$ envoie 1 sur 2, 2 sur 3, \ldots{}, 26 sur 1, et opère donc un
+décalage alphabétique d'une lettre. $\sigma^5$ (i.e. sigma appliqué 5
+fois de suite) correspond à un décalage de 5 lettres (\emph{exercice :} est-ce encore un
+cycle ?).}
+
+\vspace{0.2cm}
+
+\bigbluebox{\textbf{Théorème.}~~Toute permutation se décompose de
+  façon unique en produit de cycles à supports disjoints, à l'ordre des facteurs près (car des cycles à supports
+  disjoints commutent).}
+
+\iffalse
+\textbf{Une preuve courte via les actions de groupe (pour les
+  initiés).}~~Si $\sigma$ est une permutation sur $\E$, le sous-groupe engendré
+par $\sigma$ agit sur $\E$. Les orbites pour cette action de groupe
+forment une partition de $\E$. L'action de $\sigma$ sur chacune des
+orbites est celle d'un cycle.
+\fi
+
+\textbf{Pratique de la décomposition.}~~Il suffit de suivre les images
+itérées par $\sigma$ des différents éléments de $\E$ pour identifier
+les cycles. Par exemple pour la permutation $\sigma=[3,5,7,8,6,2,1,4]$ de
+$\Sym_8$, on a $1\rightarrow3\rightarrow7\rightarrow1$,
+$2\rightarrow5\rightarrow6\rightarrow2$ et $4\rightarrow8\rightarrow4$. Ainsi $\sigma$ se décompose en un produit
+de 3 cycles : $\sigma=(1,3,7)\circ(2,5,6)\circ(4,8)$.
+
+\vspace{0.2cm}
+
+\biggreenbox{La décomposition en produit de cycles du \texttt{rot13} est :
+$$(1,14)\circ(2,15)\circ(3,16)\circ(4,17)\circ(5,18)\circ(6,19)\circ(7,20)\circ(8,21)\circ(9,22)\circ(10,23)\circ(11,24)\circ(12,25)\circ(13,26)$$}
+
+\vspace{0.2cm}
+
+\textbf{Petit exercice :}~~Soit $\sigma\in\Sym_n$.
+\begin{itemize}
+\item[\polygona] Justifier qu'il existe un $k>1$ (fini) tel que
+  $\forall x\in\N_n$, $\sigma^k(x)=x$.
+\item Exprimer le plus petit $k>1$ possible en fonction des tailles
+  des cycles de la décomposition de $\sigma$.
+\end{itemize}
+
+\vspace{0.4cm}
+
+\bigbluebox{\textbf{Conjugaison.}~~Si $\alpha,\sigma\in\Sym_n$, on
+  appelle conjuguée de $\sigma$ par $\alpha$ la permutation
+  $\sigma'=\alpha\circ\sigma\circ\alpha^{-1}$. On a alors
+  $\sigma'\circ\alpha(x)=\alpha\circ\sigma(x)$. Ainsi, si $\sigma$ envoie
+$x$ sur $y$, $\sigma'$ envoie $\alpha(x)$ sur $\alpha(y)$.}
+
+%%%%%%%  F  I  N  %%%%%%%%%%%%%%%
+\label{lastpage}
+\end{document}
